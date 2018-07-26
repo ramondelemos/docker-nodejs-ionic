@@ -1,0 +1,34 @@
+version: "3.2"
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+  dev:
+    privileged: true
+    build: .
+    volumes:
+      - type: bind
+        source: ./src
+        target: /home/src
+      - "/var/lib/docker:/var/lib/docker"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/dev/bus/usb:/dev/bus/usb"
+    ports:
+      - "8000:8000"
+      - "8100:8100"
+    depends_on:
+      - db
+    environment:
+      PORT: ${SERVER_PORT}
+      IONIC_PORT: ${IONIC_PORT}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_HOSTNAME: ${DB_HOSTNAME}
+      DB_PORT: ${DB_PORT}
+      DB_SSL: ${DB_SSL}
